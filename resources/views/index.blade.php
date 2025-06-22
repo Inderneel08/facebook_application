@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media</title>
+    <!-- IconScout CDN -->
+    <link rel="icon" type="image/png" href="{{ asset('static/images/icons/favicon.ico') }}" />
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <script th:src="{{ asset('static/js/jquery.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('static/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('static/css/text.css') }}">
+    <link rel="stylesheet" href="{{ asset('static/vendor/bootstrap/css/bootstrap.min.css') }}">
+    <!-- <script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+        integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
+        integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+        crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+</head>
+
+<style>
+    /* Add color to the heart's border */
+    .heart-red {
+        color: red;
+        /* This affects the stroke color */
+    }
+
+
+
+    .swiper {
+        width: 100%;
+        /* Ensure the swiper container takes up the full width */
+        height: auto;
+        /* Allow the height to adjust according to the content */
+        position: relative;
+        /* Make sure it's positioned correctly */
+    }
+
+    .swiper-wrapper {
+        display: flex;
+        /* Ensure the slides are laid out in a row */
+        width: 100%;
+        /* Ensures the wrapper takes the full width */
+    }
+
+    .uil-heart {
+        cursor: pointer;
+    }
+
+    .uil-comment-dots {
+        cursor: pointer;
+    }
+
+    .uil-share-alt {
+        cursor: pointer;
+    }
+
+    .requested {
+        background-color: white !important;
+        color: blue !important;
+        border: 1px solid blue !important;
+    }
+
+    .unfollow {
+        background-color: red !important;
+
+        color: white !important;
+
+        border: 1px solid red !important;
+    }
+
+
+    .swiper-slide {
+        width: 100% !important;
+        /* Each slide should take 100% of the container's width */
+        flex-shrink: 0;
+        /* Prevent the slide from shrinking */
+        box-sizing: border-box;
+        /* Avoid any padding issues */
+    }
+
+
+
+    .image-upload-container {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .form-label {
+        display: block;
+        /* Ensures it occupies its line */
+        margin-bottom: 10px;
+        /* Adds spacing below the label */
+        font-weight: bold;
+        /* Makes the text bold for emphasis */
+        color: #333;
+        /* Adjust color as needed */
+    }
+
+
+    .global-add-button {
+        display: block;
+        margin: 0 auto 10px;
+        /* Center the button and add spacing below */
+        width: 40px;
+        /* Adjust size */
+        height: 40px;
+        border-radius: 50%;
+        /* Make it a circle */
+        font-size: 20px;
+        line-height: 1.5;
+        text-align: center;
+        padding: 0;
+    }
+
+    .image-inputs .input-group {
+        margin-bottom: 10px;
+    }
+
+    .remove-image {
+        margin-left: 5px;
+    }
+
+    .friend-card {
+        display: flex;
+        align-items: center;
+        background: #f5f5f5;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+
+    .friend-profile-photo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+
+    .friend-info h4 {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .friend-info p {
+        margin: 5px 0 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .add-friend-btn {
+        background-color: #008CBA;
+        color: white;
+        padding: 8px 12px;
+        /* Uniform padding */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        width: 100%;
+        /* Ensures button width consistency */
+        max-width: 120px;
+        /* Prevents it from expanding too much */
+        text-align: center;
+        white-space: nowrap;
+        /* Prevents text from wrapping */
+        transition: background-color 0.3s, transform 0.2s ease-in-out;
+    }
+
+    .add-friend-btn:hover {
+        background-color: #005f7f;
+        transform: scale(1.05);
+    }
+
+
+    .chatbox {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+    }
+
+    .chatbox-header {
+        font-weight: bold;
+        text-align: center;
+        padding: 5px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .chatbox .messages {
+        height: 300px;
+        overflow-y: auto;
+        padding: 5px;
+    }
+
+    .chatbox .input-area {
+        display: flex;
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .chatbox input {
+        flex: 1;
+        padding: 5px;
+    }
+
+    .chatbox button {
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    #message-count {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: blue;
+        color: black;
+        font-size: 12px;
+        font-weight: bold;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 20px;
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+    }
+</style>
+
+<body>
+    <!-- ${#authentication.principal != null} ? @{/home} : @{/} -->
+    <nav>
+        <div class="container">
+            <h2 class="logo">
+                <a href="${#authentication.principal == 'anonymousUser' ? '/' : '/home'}"
+                    style="text-decoration: none;color: inherit;">
+                    mySocial
+                </a>
+            </h2>
+            <div class="search-bar">
+                <i class="uil uil-search"></i>
+                <input type="search" placeholder="Search for creators, inspirations, and projects">
+            </div>
+
+            <div class="dropdown create d-flex justify-content-end align-items-center">
+                <!-- "Create" Button for Anonymous Users -->
+                <a class="btn btn-primary me-3" href="@{/login}" th:if="${#authorization.expression('isAnonymous()')}">
+                    Login
+                </a>
+
+                <!-- <pre th:text="${userId}"></pre> -->
+
+                <a class="btn btn-primary me-3" href="@{/signup}" th:if="${#authorization.expression('isAnonymous()')}">
+                    Signup
+                </a>
+
+                <div class="dropdown" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <button class="btn btn-secondary dropdown-toggle d-flex align-items-center dropdown-button"
+                        type="button" id="dropdownMenuButton" aria-expanded="false">
+                        <img th:if="${profile_image_path != null}" th:src="${profile_image_path}" alt="profile-image"
+                            class="profile-image">
+
+                        <img th:if="${profile_image_path == null and gender == 'MALE'}" th:src="@{/images/man.png}"
+                            alt="profile-image" class="profile-image">
+
+                        <img th:if="${profile_image_path == null and gender == 'FEMALE'}" th:src="@{/images/female.jpg}"
+                            alt="profile-image" class="profile-image">
+
+                        <!-- <p th:text="${#authentication.toString()}"></p> -->
+                        <span th:text="${firstname}"></span>
+                        &nbsp;
+                        <span th:text="${lastname}"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="@{/view-profile}">View Profile</a></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="dropdown-item form-control"
+                                    style="cursor: pointer; font-size: inherit; left: 5%; border: none; background: none;">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-------------------------------- MAIN ----------------------------------->
+    <main th:if="${#authorization.expression('isAuthenticated()')}">
+        <div class="container">
+            <!----------------- LEFT -------------------->
+            <div class="left">
+                <a class="profile">
+                    <div class="profile-photo">
+                        <img th:if="${profile_image_path != null}" th:src="${profile_image_path}" alt="profile-image">
+
+                        <img th:if="${profile_image_path == null and gender == 'MALE'}" th:src="@{/images/man.png}"
+                            alt="profile-image">
+
+                        <img th:if="${profile_image_path == null and gender == 'FEMALE'}" th:src="@{/images/female.jpg}"
+                            alt="profile-image">
+                    </div>
+                    <div class="handle">
+                        <h4>
+                            <span th:text="${firstname}"></span> <span th:text="${lastname}"></span>
+                        </h4>
+                        <span class="text-muted">@</span>
+                        <span class="text-muted" th:text="${firstname}"></span>
+                    </div>
+                </a>
+
+                <!----------------- SIDEBAR -------------------->
+                <div class="sidebar">
+                    <a class="menu-item active" onclick="explore(this)">
+                        <span><i class="uil uil-home"></i></span>
+                        <h3>Home</h3>
+                    </a>
+                    <a class="menu-item" onclick="explore(this)">
+                        <span><i class="uil uil-compass"></i></span>
+                        <h3>
+                            Explore
+                        </h3>
+                    </a>
+
+                    <a class="menu-item" id="notifications" onclick="explore(this)">
+                        <span>
+                            <i class="uil uil-bell">
+                                <small class="notification-count" th:if="${notificationCount != 0}"
+                                    th:text="${notificationCount}"></small>
+                            </i>
+                        </span>
+                        <h3>Notification</h3>
+                        <!-- ------------- NOTIFICATION POPUP ------------- -->
+                        <!-- <div class="notifications-popup"> -->
+                        <!-- <div>
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-2.jpg}" alt="profile-2">
+                                </div>
+                                <div class="notification-body">
+                                    <b>Keke Benjamin</b> accepted your friend request
+                                    <small class="text-muted">2 Days Ago</small>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-3.jpg}" alt="profile-3">
+                                </div>
+                                <div class="notification-body">
+                                    <b>John Doe</b> commented on your post
+                                    <small class="text-muted">1 Hour Ago</small>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-4.jpg}" alt="profile-4">
+                                </div>
+                                <div class="notification-body">
+                                    <b>Marry Oppong</b> and <b>283 Others</b> liked your post
+                                    <small class="text-muted">4 Minutes Ago</small>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-5.jpg}" alt="profile-5">
+                                </div>
+                                <div class="notification-body">
+                                    <b>Doris Y. Lartey</b> commented on a post you are tagged in
+                                    <small class="text-muted">2 Days Ago</small>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-6.jpg}" alt="profile-6">
+                                </div>
+                                <div class="notification-body">
+                                    <b>Keyley Jenner</b> commented on a post you are tagged in
+                                    <small class="text-muted">1 Hour Ago</small>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-7.jpg}" alt="profile-7">
+                                </div>
+                                <div class="notification-body">
+                                    <b>Jane Doe</b> commented on your post
+                                    <small class="text-muted">1 Hour Ago</small>
+                                </div>
+                            </div> -->
+                        <!-- </div> -->
+                        <!--------------- END NOTIFICATION POPUP --------------->
+                    </a>
+                    <a class="menu-item" id="messages-notifications" onclick="explore(this)">
+                        <span><i class="uil uil-envelope-alt"> <small class="notification-count"
+                                    th:if="${countMessages!=0}" th:text="${countMessages}"></small></i></span>
+                        <h3>Messages</h3>
+                    </a>
+                    <a class="menu-item" onclick="explore(this)">
+                        <span><i class="uil uil-bookmark"></i></span>
+                        <h3>Bookmarks</h3>
+                    </a>
+                    <a class="menu-item" onclick="explore(this)">
+                        <span><i class="uil uil-chart-line"></i></span>
+                        <h3>Analytics</h3>
+                    </a>
+                    <a class="menu-item" onclick="explore(this)">
+                        <span><i class="uil uil-palette"></i></span>
+                        <h3>Theme</h3>
+                    </a>
+                    <a class="menu-item" onclick="explore(this)">
+                        <span><i class="uil uil-setting"></i></span>
+                        <h3>Setting</h3>
+                    </a>
+                </div>
+                <!----------------- END OF SIDEBAR -------------------->
+                <label class="btn btn-primary" for="create-post">Create Post</label>
+            </div>
+
+            <!----------------- MIDDLE -------------------->
+            <div class="middle">
+                <!----------------- STORIES -------------------->
+
+                <!----------------- END OF STORIES -------------------->
+                <form class="create-post">
+                    <div class="profile-photo">
+                        <img th:if="${profile_image_path != null}" th:src="${profile_image_path}" alt="profile-image">
+
+                        <img th:if="${profile_image_path == null and gender == 'MALE'}" th:src="@{/images/man.png}"
+                            alt="profile-image">
+
+                        <img th:if="${profile_image_path == null and gender == 'FEMALE'}" th:src="@{/images/female.jpg}"
+                            alt="profile-image">
+                    </div>
+
+                    <input type="text" th:placeholder="|What's on your mind, ${firstname}?|" id="create-post"
+                        th:field="*{postContent}" onclick="openpost()">
+                </form>
+
+                <div class="feeds" id="feeds">
+                    <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="postModalLabel">Create Post</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form th:action="@{/postComment}" method="POST" id="postForm"
+                                        th:object="${postContent}" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <textarea class="form-control" id="postContent" name="postContent" rows="3"
+                                                placeholder="What's on your mind?" required></textarea>
+                                        </div>
+                                        <div id="image-upload-container" class="mb-3 image-upload-container">
+                                            <!-- Add Images Button -->
+                                            <label for="postImages" class="form-label">Upload Images:</label>
+
+                                            <button type="button"
+                                                class="btn btn-outline-primary add-image global-add-button">+</button>
+                                            <!-- Image Inputs Container -->
+                                            <div class="image-inputs">
+                                                <div class="input-group mb-2">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                                onclick="closeModal()">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Post</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div id="loading-spinner" style="display:none;">Loading...</div>
+
+
+                <!-- <div class="feeds">
+                    <div class="feed">
+                        <div class="head">
+                            <div class="user">
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-13.jpg}" alt="profile-13">
+                                </div>
+                                <div class="info">
+                                    <h3>Lana Rose</h3>
+                                    <small>Dubai, 15 Minutes Ago</small>
+                                </div>
+                            </div>
+                            <span class="edit">
+                                <i class="uil uil-ellipsis-h"></i>
+                            </span>
+                        </div>
+
+                        <div class="photo">
+                            <img th:src="@{/images/feed-1.jpg}" alt="feed-1">
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="interaction-buttons">
+                                <span><i class="uil uil-heart"></i></span>
+                                <span><i class="uil uil-comment-dots"></i></span>
+                                <span><i class="uil uil-share-alt"></i></span>
+                            </div>
+                            <div class="bookmark">
+                                <span><i class="uil uil-bookmark-full"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="liked-by">
+                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
+                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
+                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
+                            <p>Liked by <b>Ernest Achiever</b> and <b>2, 323 others</b></p>
+                        </div>
+
+                        <div class="caption">
+                            <p><b>Lana Rose</b> Lorem ipsum dolor sit quisquam eius.
+                            <span class="harsh-tag">#lifestyle</span></p>
+                        </div>
+
+                        <div class="comments text-muted">
+                            View all 277 comments
+                        </div>
+                    </div>
+
+                    <div class="feed">
+                        <div class="head">
+                            <div class="user">
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-10.jpg}" alt="profile-10">
+                                </div>
+                                <div class="info">
+                                    <h3>Clara Dwayne</h3>
+                                    <small>Miami, 2 Hours Ago</small>
+                                </div>
+                            </div>
+                            <span class="edit">
+                                <i class="uil uil-ellipsis-h"></i>
+                            </span>
+                        </div>
+
+                        <div class="photo">
+                            <img th:src="@{/images/feed-3.jpg}" alt="feed-3">
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="interaction-buttons">
+                                <span><i class="uil uil-heart"></i></span>
+                                <span><i class="uil uil-comment-dots"></i></span>
+                                <span><i class="uil uil-share-alt"></i></span>
+                            </div>
+                            <div class="bookmark">
+                                <span><i class="uil uil-bookmark-full"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="liked-by">
+                            <span><img th:src="@{/images/profile-11.jpg}" alt="profile-11"></span>
+                            <span><img th:src="@{/images/profile-5.jpg}" alt="profile-5"></span>
+                            <span><img th:src="@{/images/profile-16.jpg}" alt="profile-16"></span>
+                            <p>Liked by <b>Diana Rose</b> and <b>2, 323 others</b></p>
+                        </div>
+
+                        <div class="caption">
+                            <p><b>Clara Dwayne</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, fugiat? Ipsam voluptatibus beatae facere eos harum voluptas distinctio, officia, facilis sed quisquam esse, assumenda minima ut. Excepturi sit quis reiciendis!
+                            <span class="harsh-tag">#lifestyle</span></p>
+                        </div>
+
+                        <div class="comments text-muted">
+                            View all 100 comments
+                        </div>
+                    </div>
+
+                    <div class="feed">
+                        <div class="head">
+                            <div class="user">
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-4.jpg}" alt="profile-4">
+                                </div>
+                                <div class="info">
+                                    <h3>Rosalinda Clark</h3>
+                                    <small>New York, 50 Minutes Ago</small>
+                                </div>
+                            </div>
+                            <span class="edit">
+                                <i class="uil uil-ellipsis-h"></i>
+                            </span>
+                        </div>
+
+                        <div class="photo">
+                            <img th:src="@{/images/feed-4.jpg}" alt="feed-4">
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="interaction-buttons">
+                                <span><i class="uil uil-heart"></i></span>
+                                <span><i class="uil uil-comment-dots"></i></span>
+                                <span><i class="uil uil-share-alt"></i></span>
+                            </div>
+                            <div class="bookmark">
+                                <span><i class="uil uil-bookmark-full"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="liked-by">
+                            <span><img th:src="@{/images/profile-12.jpg}" alt="profile-12"></span>
+                            <span><img th:src="@{/images/profile-13.jpg}" alt="profile-13"></span>
+                            <span><img th:src="@{/images/profile-14.jpg}" alt="profile-14"></span>
+                            <p>Liked by <b>Clara Dwayne</b> and <b>2, 323 others</b></p>
+                        </div>
+
+                        <div class="caption">
+                            <p><b>Rosalinda Clark</b> Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quo ullam, quam voluptatibus natus ex corporis ea atque quisquam, necessitatibus, cumque eligendi aliquam nulla soluta hic. Obcaecati, tempore dignissimos! Esse cupiditate laborum ullam, quae necessitatibus, officiis, quaerat aspernatur illo voluptatum repellat perferendis voluptatem similique. Assumenda nostrum, eius sit laborum nesciunt deserunt!
+                            <span class="harsh-tag">#lifestyle</span></p>
+                        </div>
+
+                        <div class="comments text-muted">
+                            View all 50 comments
+                        </div>
+                    </div>
+
+                    <div class="feed">
+                        <div class="head">
+                            <div class="user">
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-5.jpg}" alt="profile-5">
+                                </div>
+                                <div class="info">
+                                    <h3>Alexandria Riana</h3>
+                                    <small>Dubai, 1 Hour Ago</small>
+                                </div>
+                            </div>
+                            <span class="edit">
+                                <i class="uil uil-ellipsis-h"></i>
+                            </span>
+                        </div>
+
+                        <div class="photo">
+                            <img th:src="@{/images/feed-5.jpg}" alt="feed-5">
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="interaction-buttons">
+                                <span><i class="uil uil-heart"></i></span>
+                                <span><i class="uil uil-comment-dots"></i></span>
+                                <span><i class="uil uil-share-alt"></i></span>
+                            </div>
+                            <div class="bookmark">
+                                <span><i class="uil uil-bookmark-full"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="liked-by">
+                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
+                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
+                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
+                            <p>Liked by <b>Lana Rose</b> and <b>5, 323 others</b></p>
+                        </div>
+
+                        <div class="caption">
+                            <p><b>Alexandria Riana</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi architecto sunt itaque, in, enim non doloremque velit unde nihil vitae impedit dolorum, distinctio ab deleniti!
+                            <span class="harsh-tag">#lifestyle</span></p>
+                        </div>
+
+                        <div class="comments text-muted">
+                            View all 540 comments
+                        </div>
+                    </div>
+
+                    <div class="feed">
+                        <div class="head">
+                            <div class="user">
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-7.jpg}" alt="profile-7">
+                                </div>
+                                <div class="info">
+                                    <h3>Keylie Hadid</h3>
+                                    <small>Dubai, 3 Hours Ago</small>
+                                </div>
+                            </div>
+                            <span class="edit">
+                                <i class="uil uil-ellipsis-h"></i>
+                            </span>
+                        </div>
+
+                        <div class="photo">
+                            <img th:src="@{/images/feed-7.jpg}" alt="feed-7">
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="interaction-buttons">
+                                <span><i class="uil uil-heart"></i></span>
+                                <span><i class="uil uil-comment-dots"></i></span>
+                                <span><i class="uil uil-share-alt"></i></span>
+                            </div>
+                            <div class="bookmark">
+                                <span><i class="uil uil-bookmark-full"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="liked-by">
+                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
+                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
+                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
+                            <p>Liked by <b>Riana Rose</b> and <b>1, 226 others</b></p>
+                        </div>
+
+                        <div class="caption">
+                            <p><b>Keylie Hadid</b> Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem obcaecati nisi veritatis quisquam eius accusantium rem quo repellat facilis neque.
+                            <span class="harsh-tag">#lifestyle</span></p>
+                        </div>
+
+                        <div class="comments text-muted">
+                            View all 199 comments
+                        </div>
+                    </div>
+
+                    <div class="feed">
+                        <div class="head">
+                            <div class="user">
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-15.jpg}" alt="profile-15">
+                                </div>
+                                <div class="info">
+                                    <h3>Benjamin Dwayne</h3>
+                                    <small>New York, 5 Hours Ago</small>
+                                </div>
+                            </div>
+                            <span class="edit">
+                                <i class="uil uil-ellipsis-h"></i>
+                            </span>
+                        </div>
+
+                        <div class="photo">
+                            <img th:src="@{/images/feed-2.jpg}" alt="feed-2">
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="interaction-buttons">
+                                <span><i class="uil uil-heart"></i></span>
+                                <span><i class="uil uil-comment-dots"></i></span>
+                                <span><i class="uil uil-share-alt"></i></span>
+                            </div>
+                            <div class="bookmark">
+                                <span><i class="uil uil-bookmark-full"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="liked-by">
+                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
+                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
+                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
+                            <p>Liked by <b>Ernest Achiever</b> and <b>2, 323 others</b></p>
+                        </div>
+
+                        <div class="caption">
+                            <p><b>Benjamin Dwayne</b> Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nostrum, consequuntur!
+                            <span class="harsh-tag">#lifestyle</span></p>
+                        </div>
+
+                        <div class="comments text-muted">
+                            View all 277 comments
+                        </div>
+                    </div>
+
+                    <div class="feed">
+                        <div class="head">
+                            <div class="user">
+                                <div class="profile-photo">
+                                    <img th:src="@{/images/profile-3.jpg}" alt="profile-3">
+                                </div>
+                                <div class="info">
+                                    <h3>Indiana Ellison</h3>
+                                    <small>Qatar, 8 Hours Ago</small>
+                                </div>
+                            </div>
+                            <span class="edit">
+                                <i class="uil uil-ellipsis-h"></i>
+                            </span>
+                        </div>
+
+                        <div class="photo">
+                            <img th:src="@{/images/feed-6.jpg}" alt="feed-6">
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="interaction-buttons">
+                                <span><i class="uil uil-heart"></i></span>
+                                <span><i class="uil uil-comment-dots"></i></span>
+                                <span><i class="uil uil-share-alt"></i></span>
+                            </div>
+                            <div class="bookmark">
+                                <span><i class="uil uil-bookmark-full"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="liked-by">
+                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
+                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
+                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
+                            <p>Liked by <b>Benjamin Dwayne</b> and <b>2, 323 others</b></p>
+                        </div>
+
+                        <div class="caption">
+                            <p><b>Indiana Ellison</b> Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consequuntur itaque quasi autem pariatur ducimus eligendi, qui odio molestias at molestiae.
+                            <span class="harsh-tag">#lifestyle</span></p>
+                        </div>
+
+                        <div class="comments text-muted">
+                            View all 277 comments
+                        </div>
+                    </div>
+                </div> -->
+
+            </div>
+            <!----------------- END OF MIDDLE -------------------->
+
+            <!----------------- RIGHT -------------------->
+            <div class="right">
+                <!------- MESSAGES ------->
+                <div class="messages">
+                    <div class="heading">
+                        <h4>Messages</h4>
+                        <i class="uil uil-edit"></i>
+                    </div>
+
+                    <!-- <p th:text="'You have ' + ${#lists.size(friendRequests)} + ' friend requests.'"></p> -->
+
+                    <div class="search-bar">
+                        <i class="uil uil-search"></i>
+                        <input type="search" placeholder="Search messages" id="message-search">
+                    </div>
+
+
+                    <div class="category">
+                        <h6 class="active">Messages</h6>
+                        <!-- <h6>General</h6> -->
+                        <!-- <h6 class="message-requests" style="cursor: pointer;" id="requests_friend">
+                            Requests (<span th:text="${friendRequests}"></span>)
+                        </h6> -->
+                    </div>
+
+                    <!-- <div class="message">
+                        <div class="profile-photo">
+                            <img th:src="@{/images/profile-17.jpg}" alt="profile-17">
+                        </div>
+                        <div class="message-body">
+                            <h5>Edem Quist</h5>
+                            <p class="text-muted">Just woke up bruh</p>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="profile-photo">
+                            <img th:src="@{/images/profile-6.jpg}" alt="profile-6">
+                        </div>
+                        <div class="message-body">
+                            <h5>Daniella Jackson</h5>
+                            <p class="text-bold">2 new messages</p>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="profile-photo">
+                            <img th:src="@{/images/profile-8.jpg}" alt="profile-8">
+                            <div class="active"></div>
+                        </div>
+                        <div class="message-body">
+                            <h5>Chantel Msiza</h5>
+                            <p class="text-muted">lol u right</p>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="profile-photo">
+                            <img th:src="@{/images/profile-10.jpg}" alt="profile-10">
+                        </div>
+                        <div class="message-body">
+                            <h5>Juliet Makarey</h5>
+                            <p class="text-muted">Birtday Tomorrow</p>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="profile-photo">
+                            <img th:src="@{/images/profile-3.jpg}" alt="profile-3">
+                            <div class="active"></div>
+                        </div>
+                        <div class="message-body">
+                            <h5>Keylie Hadid</h5>
+                            <p class="text-bold">5 new messages</p>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="profile-photo">
+                            <img th:src="@{/images/profile-15.jpg}" alt="profile-15">
+                        </div>
+                        <div class="message-body">
+                            <h5>Benjamin Dwayne</h5>
+                            <p class="text-muted">haha got that!</p>
+                        </div>
+                    </div> -->
+
+                    <!-- <div th:each="friend : ${friendRequests}" class="message" style="cursor: pointer;">
+                        <div class="profile-photo">
+                            <img th:src="@{${friend.profile_photo}}" th:alt="'profile-' + ${friend.first_name} + '_' + ${friend.last_name}">
+                        </div>
+
+                        <div class="message-body">
+                            <h5 th:text="${friend.first_name} + ' ' + ${friend.last_name}"></h5>
+
+                            <p class="text-muted">Hello</p>
+                        </div>
+                    </div> -->
+
+                    <div class="messages-container" style="cursor: pointer; display: none;"></div>
+
+                    <div class="chatbox" id="chatbox">
+                        <div class="chatbox-header" id="chatTitle"
+                            style="display: flex; justify-content: space-between;">
+                            <img src="" id="profiles-images" class="profile-photo" alt="profilesss"
+                                style="display: inline-block;">
+                            <p id="chatMessages"></p>
+
+                            <button class="close-btn" id="closeChat">&times;</button>
+                        </div>
+
+                        <div id="chatbox-messages" class="chat-messages"></div>
+
+                        <div class="input-area" id="ourTextArea">
+                            <input type="text" id="messageInput" placeholder="Type a message...">
+                            <button id="messageSendButton">Send</button>
+                        </div>
+
+                        <div class="showTextAreaHidden" style="display: none;">
+                            <p id="textShowMessage"></p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- <div class="friend-requests">
+                    <h4>Requests</h4>
+                </div> -->
+
+                <!-- <div class="friend-requests">
+                    <h4>Requests</h4>
+                    <div class="request">
+                        <div class="info">
+                            <div class="profile-photo">
+                                <img th:src="@{/images/profile-20.jpg}" alt="profile-20">
+                            </div>
+                            <div>
+                                <h5>Hajia Bintu</h5>
+                                <p class="text-muted">8 mutual friends</p>
+                            </div>
+                        </div>
+                        <div class="action">
+                            <button class="btn btn-primary">
+                                Accept
+                            </button>
+                            <button class="btn">
+                                Decline
+                            </button>
+                        </div>
+                    </div>
+                    <div class="request">
+                        <div class="info">
+                            <div class="profile-photo">
+                                <img th:src="@{/images/profile-18.jpg}" alt="profile-18">
+                            </div>
+                            <div>
+                                <h5>Edelson Mandela</h5>
+                                <p class="text-muted">2 mutual friends</p>
+                            </div>
+                        </div>
+                        <div class="action">
+                            <button class="btn btn-primary">
+                                Accept
+                            </button>
+                            <button class="btn">
+                                Decline
+                            </button>
+                        </div>
+                    </div>
+                    <div class="request">
+                        <div class="info">
+                            <div class="profile-photo">
+                                <img th:src="@{/images/profile-17.jpg}" alt="profile-17">
+                            </div>
+                            <div>
+                                <h5>Megan Baldwin</h5>
+                                <p class="text-muted">5 mutual friends</p>
+                            </div>
+                        </div>
+                        <div class="action">
+                            <button class="btn btn-primary">
+                                Accept
+                            </button>
+                            <button class="btn">
+                                Decline
+                            </button>
+                        </div>
+                    </div>
+                </div> -->
+
+            </div>
+            <!----------------- END OF RIGHT -------------------->
+        </div>
+    </main>
+
+    <main th:if="${#authorization.expression('isAnonymous()')}">
+        <h1 id="auth-text" style="text-align: center;"></h1>
+    </main>
+
+
+    <!----------------- THEME CUSTOMIZATION -------------------->
+    <div class="customize-theme">
+        <div class="card">
+            <h2>Customize your view</h2>
+            <p class="text-muted">Manage your font size, color, and background</p>
+
+            <!----------- FONT SIZE ----------->
+            <div class="font-size">
+                <h4>Font Size</h4>
+                <div>
+                    <h6>Aa</h6>
+                    <div class="choose-size">
+                        <span class="font-size-1"></span>
+                        <span class="font-size-2 active"></span>
+                        <span class="font-size-3"></span>
+                        <span class="font-size-4"></span>
+                        <span class="font-size-5"></span>
+                    </div>
+                    <h3>Aa</h3>
+                </div>
+            </div>
+
+            <!----------- PRIMARY COLORS ----------->
+            <div class="color">
+                <h4>Color</h4>
+                <div class="choose-color">
+                    <span class="color-1 active"></span>
+                    <span class="color-2"></span>
+                    <span class="color-3"></span>
+                    <span class="color-4"></span>
+                    <span class="color-5"></span>
+                </div>
+            </div>
+
+            <!----------- BACKGROUND COLORS ----------->
+            <div class="background">
+                <h4>Background</h4>
+                <div class="choose-bg">
+                    <div class="bg-1 active">
+                        <span></span>
+                        <h5 for="bg-1">Light</h5>
+                    </div>
+                    <div class="bg-2">
+                        <span></span>
+                        <h5 for="bg-2">Dim</h5>
+                    </div>
+                    <div class="bg-3">
+                        <span></span>
+                        <h5 for="bg-3">Dark</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/index.js}"></script>
+</body>
+
+
+<style>
+    .messages-container {
+        max-height: 300px;
+        /* Adjust height to fit ~5 messages */
+        overflow-y: auto;
+        /* Enables vertical scrolling */
+        scrollbar-width: thin;
+        /* Firefox scrollbar */
+        scrollbar-color: #ccc #f0f0f0;
+        /* Custom scrollbar color */
+        padding: 10px;
+    }
+
+    /* Custom scrollbar for Webkit browsers (Chrome, Edge, Safari) */
+    .messages-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .messages-container::-webkit-scrollbar-thumb {
+        background-color: #aaa;
+        border-radius: 10px;
+    }
+
+    .messages-container::-webkit-scrollbar-track {
+        background: #f0f0f0;
+    }
+
+    .message {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .profile-photo img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .message-body h5 {
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .text-bold {
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+
+<script>
+    // document.querySelector('.messages-container').addEventListener('click', function() {
+    //     document.getElementById('chatbox').style.display = 'block';
+    // });
+
+
+</script>
+
+<script>
+    var sidebarText = 'Home';
+
+    let activeMenuText = null;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const textElement = document.getElementById("auth-text");
+        const messages = ["Register in our social media site", "Login to your social media account"];
+        let index = 0;
+
+        function updateText() {
+            textElement.textContent = messages[index];
+            index = (index + 1) % messages.length; // Loop through the messages
+        }
+
+        if (textElement != null) {
+            updateText(); // Show the first message immediately
+            setInterval(updateText, 2000); // Update the text every 4 seconds
+        }
+    });
+
+</script>
+
+<script>
+
+    let currentPage = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        $.ajax({
+            url: '/getMessagesViaLogin',
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (error) {
+                console.error();
+            }
+        });
+    });
+
+    let isLoading = false;
+
+    function fetchPosts(page) {
+
+        $.ajax({
+            url: '/posts/initial', // Endpoint
+            method: 'GET',         // HTTP method
+            dataType: 'json',      // Expected response format
+            data: { page: page },
+            success: function (data) {
+
+                if (data && data.size > 0) {
+                    appendPosts(data.content);
+
+                    isLoading = false;
+                }
+                else {
+                    console.log("No more posts to load...");
+
+                    isLoading = true;
+                }
+            },
+            error: function (error) {
+                console.error("Failed to fetch posts:", error); // Handle errors
+
+                isLoading = false;
+            }
+        });
+    }
+
+    function appendFriends(friends) {
+        var feedsContainer = $('#feeds');
+
+        friends.forEach(friend => {
+            var profilePhoto = null;
+
+            if (friend.profile_photo == null) {
+                if (friend.gender == 0) {
+                    profilePhoto = "/images/man.png";
+                }
+                else {
+                    profilePhoto = "/images/female.jpg";
+                }
+            }
+            else {
+                profilePhoto = friend.profile_photo;
+            }
+
+            var friendElement = `
+                <br/>
+                <div class="friend-card p-3 border rounded">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <img src="${profilePhoto}" alt="${friend.first_name} ${friend.last_name}" class="friend-profile-photo rounded-circle" width="50" height="50">
+                        </div>
+                        <div class="col">
+                            <h4 class="mb-0">${friend.first_name} ${friend.last_name}</h4>
+                        </div>
+                        <div class="col-auto" id="friend-buttons-${friend.id}">
+
+                        </div>
+                    </div>
+                </div>
+                <br/>
+            `;
+
+            feedsContainer.append(friendElement);
+
+            var buttonsContainer = $(`#friend-buttons-${friend.id}`);
+
+            if (friend.approved == -1) {
+                buttonsContainer.append(`
+                    <a class="btn btn-primary add-friend-btn" data-profile-type="${friend.profile_type}" id="add-friend-${friend.id}">Follow</a>
+                `);
+            } else if (friend.approved == 0) {
+                buttonsContainer.append(`
+                    <a class="btn btn-primary add-friend-btn requested" data-profile-type="${friend.profile_type}" id="add-friend-${friend.id}">Requested</a>
+                `);
+            }
+            else if (friend.approved == 1) {
+                buttonsContainer.append(`
+                    <a class="btn btn-primary add-friend-btn unfollow" data-profile-type="${friend.profile_type}" id="add-friend-${friend.id}">UnFollow</a>
+                `);
+            }
+
+
+            $(`#add-friend-${friend.id}`).on('click', function (event) {
+                $.ajax({
+                    url: '/sendFriendRequest',
+                    method: 'POST',
+                    data: { friendId: friend.id },
+                    success: function (data) {
+                        if (data === 'Success') {
+                            console.log(1);
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Error : -> " + error);
+
+                        event.target.textContent = "Follow";
+
+                        event.target.classList.remove("requested");
+                    }
+                });
+            });
+        });
+    }
+
+    function appendPosts(posts) {
+        // console.log(posts);
+
+        var feedsContainer = $('#feeds');
+
+        posts.forEach((post, index) => {
+            var postElement = `
+                <div class="feed">
+                    <div class="head">
+                        <div class="user">
+                            <div class="info">
+                                <small class="post-time">${post.address}, ${timeAgo(post.created_at)}</small>
+                            </div>
+                        </div>
+                        <span class="edit">
+                            <i class="uil uil-ellipsis-h"></i>
+                        </span>
+                    </div>
+
+                    <div class="photo">
+                        <div class="swiper swiper-${post.id}">
+                            <div class="swiper-wrapper">
+                                ${post.media_content_path.map(path => `
+                                    <div class="swiper-slide">
+                                        <img src="${path}" alt="post image">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <!-- Add navigation buttons -->
+                            <div class="swiper-button-next swiper-button-next-${post.id}"></div>
+                            <div class="swiper-button-prev swiper-button-prev-${post.id}"></div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <div class="interaction-buttons">
+                            <span><i class="uil uil-heart ${post.liked == true ? 'heart-red' : ''}" id="uil-heart-${post.id}"></i></span>
+                            <span><i class="uil uil-comment-dots" id="uil-comment-dots-${post.id}"></i></span>
+                            <span><i class="uil uil-share-alt" id="uil-share-alt-${post.id}"></i></span>
+                        </div>
+                        <div class="bookmark">
+                            <span><i class="uil uil-bookmark-full"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="liked-by">
+                        <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
+                        <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
+                        <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
+                        <p>Liked by <b>Ernest Achiever</b> and <b>2, 323 others</b></p>
+                    </div>
+
+                    <div class="caption">
+                        <p><b>${post.first_name} ${post.last_name}</b> ${post.post_content}
+                    </div>
+
+                    <div class="comments text-muted">
+                        View all 277 comments
+                    </div>
+                </div>
+            `;
+
+            feedsContainer.append(postElement);
+
+            let enableLoop = post.media_content_path.length > 1;
+
+            $(`#uil-heart-${post.id}`).on('click', function () {
+                // console.log(post);
+
+                $.ajax({
+                    url: '/perform-like-unlike', // Endpoint
+                    method: 'POST',         // HTTP method
+                    data: { id: post.id },
+                    success: function (data) {
+
+                        if (data === 'Success') {
+                            $(`#uil-heart-${post.id}`).addClass('heart-red'); // Add the 'heart-red' class on click to fill the heart
+                        }
+                        else {
+                            if (data === 'Unlike') {
+                                $(`#uil-heart-${post.id}`).removeClass('heart-red'); // Add the 'heart-red' class on click to fill the heart
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Failed to like the post:", error); // Handle errors
+                    }
+                });
+            });
+
+            setTimeout(() => {
+                new Swiper(`.swiper-${post.id}`, {
+                    navigation: {
+                        nextEl: `.swiper-button-next-${post.id}`,
+                        prevEl: `.swiper-button-prev-${post.id}`,
+                    },
+                    loop: enableLoop, // Enable loop only if multiple slides
+                    slidesPerView: 1,
+                    spaceBetween: 10,
+                });
+            }, 0); // Delay ensures DOM is updated
+        });
+    }
+
+    function timeAgo(createdAt) {
+        const createdDate = new Date(createdAt);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - createdDate) / 1000);
+
+        if (diffInSeconds < 60) {
+            return `${diffInSeconds} seconds ago`;
+        } else if (diffInSeconds < 3600) {
+            const minutes = Math.floor(diffInSeconds / 60);
+            return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+        } else if (diffInSeconds < 86400) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+        } else {
+            const days = Math.floor(diffInSeconds / 86400);
+            return `${days} day${days > 1 ? "s" : ""} ago`;
+        }
+    }
+
+    $(document).ready(function () {
+        fetchPosts(currentPage);
+
+        let previousScrollTop = $(window).scrollTop();
+
+        let currentScrollTop = $(this).scrollTop(); // Get the current scroll position
+
+        $(window).on('scroll', function () {
+
+            // console.log(currentScrollTop >= previousScrollTop);
+
+            if (currentScrollTop >= previousScrollTop) {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+
+                    if (!isLoading) {
+
+                        if (activeMenuText === 'Home' || activeMenuText == null) {
+                            currentPage++;
+
+                            fetchPosts(currentPage);
+                        }
+                        else if (activeMenuText === 'Explore') {
+                            currentPage++;
+
+                            exploreAllusers(activeMenuText);
+                        }
+                        else if (activeMenuText === 'Notification') {
+                            currentPage++;
+
+                            exploreAllusers(activeMenuText);
+                        }
+                    }
+                }
+
+                previousScrollTop = currentScrollTop;
+            }
+        });
+    });
+
+</script>
+
+<script>
+
+    let scrollPage = 0;
+
+    function appendContacts(messages, searching) {
+        let messagesContainer = $('.messages-container');
+
+        if (messages.length !== 0) {
+            messages.forEach(msg => {
+
+                let messageHtml = `
+                    <div class="message" data-message-id="${msg.id}" data-name-id="${msg.first_name} ${msg.last_name}" data-src-id="${msg.profile_photo}">
+                        <div class="profile-photo" data-message-id="${msg.id}" data-name-id="${msg.first_name} ${msg.last_name}" data-src-id="${msg.profile_photo}">
+                            <img src="${msg.profile_photo}" alt="profile-${msg.first_name} ${msg.last_name}" data-message-id="${msg.id}" data-name-id="${msg.first_name} ${msg.last_name}" data-src-id="${msg.profile_photo}">
+                            ${searching == true ?
+                        (``) : (`
+                                    <span id="message-count" class="message-count-${msg.id}" data-message-id="${msg.id}" data-name-id="${msg.first_name} ${msg.last_name}" data-src-id="${msg.profile_photo}"></span>
+                                `)}
+                        </div>
+                        <div class="message-body" data-message-id="${msg.id}" data-name-id="${msg.first_name} ${msg.last_name}" data-src-id="${msg.profile_photo}">
+                            <h5 data-message-id="${msg.id}" data-name-id="${msg.first_name} ${msg.last_name}" data-src-id="${msg.profile_photo}">${msg.first_name} ${msg.last_name}</h5>
+                            <p class="text-bold" data-message-id="${msg.id}" data-name-id="${msg.first_name} ${msg.last_name}" data-src-id="${msg.profile_photo}"></p>
+                            ${searching == true ?
+                        `` :
+                        `<p class="text-bold" data-message-id="${msg.id}" data-name-id="${msg.first_name} ${msg.last_name}" data-src-id="${msg.profile_photo}"> ${msg.messageSend} </p>`
+                    }
+                        </div>
+                    </div>
+                `;
+
+                messagesContainer.append(messageHtml);
+
+                if (msg.typeofMessage == 1) {
+                    if (msg.seen == 0) {
+                        var senderId = msg.id;
+                        $.ajax({
+                            url: '/getCountMessagesRecieved',
+                            method: 'GET',
+                            dataType: 'json',
+                            data: { senderId: senderId },
+                            success: function (data) {
+                                if (data != 0) {
+                                    $(`.message-count-${senderId}`).text(data);
+                                }
+                            },
+                            error: function (error) {
+                                console.error();
+                            }
+                        });
+                    }
+                }
+            });
+
+            $('.message').on('click', function (event) {
+
+                // if($())
+
+                var messageId = BigInt(event.target.getAttribute('data-message-id'));
+
+                var userId = BigInt([[${ userId }]]);
+
+                // console.log("UserId1 :->" + userId);
+
+                // console.log("RecieverId1 :->" + messageId);
+
+                document.getElementById('chatMessages').innerHTML = event.target.getAttribute('data-name-id');
+
+                document.getElementById('profiles-images').src = event.target.getAttribute('data-src-id');
+
+                // document.getElementById('messageSendButton').setAttribute('data-name',event.target.getAttribute('data-name-id'));
+
+                document.getElementById('messageSendButton').setAttribute('data-img', event.target.getAttribute('data-src-id'));
+
+                // Once clicked now activate websocket connection.
+
+                disconnect();
+
+                $.ajax({
+                    url: '/establishConnection',
+                    method: 'POST',
+                    data: { senderId: userId, recieverId: messageId },
+                    success: function (data, textStatus, jqXHR) {
+                        if (jqXHR.status == 200) {
+                            startConnection(userId, messageId);
+
+                            $('#ourTextArea').show();
+
+                            document.getElementById('textShowMessage').innerHTML = '';
+
+                            $('.showTextAreaHidden').hide();
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $('#ourTextArea').hide();
+
+                        document.getElementById('textShowMessage').innerHTML = jqXHR.responseText;
+
+                        $('.showTextAreaHidden').show();
+                    }
+                });
+
+                $('#chatbox').show();
+            });
+        }
+    }
+
+    function fetchMessages() {
+        var message = $('#message-search').val();
+
+        if (message != '') {
+            $.ajax({
+                url: '/fetchMessages',
+                method: 'GET',
+                dataType: 'json',
+                data: { page: scrollPage, message: message },
+                success: function (data) {
+
+                    if (data && data.size > 0) {
+                        appendContacts(data.content, true);
+                    }
+                    else {
+                        console.log("No more posts to load...");
+                    }
+                },
+                error: function (error) {
+                    console.error("Failed to fetch posts:", error);
+                }
+            });
+        }
+        else if (message == '') {
+            $.ajax({
+                url: '/getChatMessages',
+                method: 'GET',
+                dataType: 'json',
+                data: { page: scrollPage },
+                success: function (data) {
+
+                    if (data && data.size > 0) {
+                        appendContacts(data.content, false);
+                    }
+                    else {
+                        console.log("No more posts to load...");
+                    }
+                },
+                error: function (error) {
+                    console.error("Failed to fetch posts:", error);
+                }
+            });
+        }
+    }
+
+
+    $('#message-search').on('input', function () {
+        $('.messages-container').empty();
+
+        scrollPage = 0;
+
+        $('.messages-container').show();
+
+        fetchMessages();
+    });
+
+
+    $('.messages-container').on('scroll', function () {
+        var container = $(this);
+
+        var scrollHeight = container[0].scrollHeight;
+
+        var scrollTop = container.scrollTop();
+
+        var containerHeight = container.outerHeight();
+
+        if (scrollTop + containerHeight >= scrollHeight - 10) {
+            scrollPage++;
+
+            fetchMessages();
+        }
+    });
+
+    $('#closeChat').on('click', function () {
+        $('#chatbox').hide();
+
+        disconnect();
+    });
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.messages-container').empty();
+
+        scrollPage = 0;
+
+        $('.messages-container').show();
+
+        fetchMessages();
+    });
+</script>
+
+<script>
+    let successMessage = "[[${session.successMessage}]]";
+    let errorMessage = "[[${session.errorMessage}]]";
+
+    if (successMessage) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: successMessage,
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = '/home';
+        });
+    }
+
+    if (errorMessage) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorMessage,
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = '/home';
+        });
+    }
+
+
+    function openpost() {
+        const modal = document.getElementById('postModal');
+        modal.classList.add('show');
+        modal.style.display = 'block';
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('postModal');
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+    }
+
+</script>
+
+<script>
+    document.addEventListener('click', function (e) {
+        const container = document.getElementById('image-upload-container');
+
+        if (e.target.classList.contains('add-image')) {
+            const newInputGroup = document.createElement('div');
+            newInputGroup.className = 'input-group mb-2';
+            newInputGroup.innerHTML = `
+                <input class="form-control" type="file" name="postImages[]" accept="image/*" required>
+                <button type="button" class="btn btn-outline-danger remove-image">-</button>
+            `;
+            container.appendChild(newInputGroup);
+        }
+
+        if (e.target.classList.contains('remove-image')) {
+            const inputGroup = e.target.parentElement;
+            const prevInputGroup = inputGroup.previousElementSibling;
+            container.removeChild(inputGroup);
+        }
+
+        if (e.target.classList.contains('add-friend-btn')) {
+
+            if (event.target.textContent == "Requested") {
+                event.target.textContent = "Follow";
+
+                event.target.classList.remove("requested");
+            }
+            else if (event.target.textContent == "UnFollow") {
+                event.target.textContent = "Follow";
+
+                event.target.classList.remove("unfollow");
+            }
+            else {
+                var profileType = event.target.getAttribute('data-profile-type');
+
+                if (profileType == "0") {
+                    event.target.textContent = "UnFollow";
+
+                    event.target.classList.add("unfollow");
+                }
+                else {
+                    event.target.textContent = "Requested";
+
+                    event.target.classList.add("requested");
+                }
+            }
+        }
+
+    });
+</script>
+
+
+<script>
+
+    $('#requests_friend').on('click', function () {
+
+        $.ajax({
+            url: '/getFriends',
+            method: 'GET',
+            dataType: 'json',
+        });
+
+    });
+
+</script>
+
+
+<script>
+    function explore(element) {
+        let activeMenu = $(element);
+
+        activeMenuText = activeMenu.find('h3').text().trim(); // Trim text to remove extra whitespace
+
+        previousScrollTop = 0;
+        currentScrollTop = 0;
+
+        $('#feeds').scrollTop(0); // If #feeds is a scrollable div
+        $(window).scrollTop(0); // If you want to scroll the whole page
+
+        if (sidebarText != activeMenuText) {
+            $('#feeds').empty();
+
+            currentPage = 0;
+
+            sidebarText = activeMenuText;
+
+            exploreAllusers(sidebarText);
+        }
+    }
+
+    function appendNotifications(notifications) {
+        var notificationsContainer = $('#feeds');
+
+        var indexArray = [];
+
+        notifications.forEach(notification => {
+            indexArray.push(notification.id);
+        });
+
+        $.ajax({
+            url: '/changeSeenStatus',
+            method: 'POST',
+            data: { indices: indexArray },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (error) {
+                console.error("Failed :", error);
+            }
+        });
+
+
+        notifications.forEach(notification => {
+            console.log(notification);
+
+            var notificationText = '';
+
+            if (notification.action === "LIKED") {
+                notificationText = `${notification.first_name} ${notification.last_name} liked your post.`;
+            } else if (notification.action === "REQUESTED") {
+                notificationText = `${notification.first_name} ${notification.last_name} sent you follow request.`;
+            }
+            else if (notification.action === "FOLLOWING") {
+                notificationText = `${notification.first_name} ${notification.last_name} started following you.`;
+            }
+
+            var notificationElement = `
+                <div class="notification-${notification.id}">
+                    <div class="notification-content">
+                        <p>
+                            <img src="${notification.image}" class="friend-profile-photo rounded-circle me-2" width="50" height="50">
+                            <small>
+                                ${notificationText} ${timeAgo(notification.created_at)}
+                                ${notification.action === "REQUESTED" ?
+                    `<a class="btn btn-primary acceptButton" style="color:white;" data-reciever-id="${notification.recieverId}" data-notification-id="${notification.id}" data-sender-id="${notification.senderId}">Accept</a>
+                                    <a class="btn btn-danger declineButton" style="color:white;" data-reciever-id="${notification.recieverId}" data-notification-id="${notification.id}" data-sender-id="${notification.senderId}">Decline</a>`
+                    : ""}
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            notificationsContainer.append(notificationElement);
+        });
+
+        $('.acceptButton').on('click', function () {
+            var senderId = event.target.getAttribute("data-sender-id");
+
+            var recieverId = event.target.getAttribute("data-reciever-id");
+
+            var notificationId = event.target.getAttribute("data-notification-id");
+
+            $.ajax({
+                url: '/accept-friend-request',
+                method: 'POST',
+                data: { senderId: senderId, recieverId: recieverId },
+                success: function (data) {
+                    document.querySelector(`.notification-${notificationId}`).classList.add('hiddenAction');
+                },
+                error: function (error) {
+                    console.error("Failed :", error);
+                }
+            });
+        });
+
+        $('.declineButton').on('click', function () {
+            var senderId = event.target.getAttribute("data-sender-id");
+
+            var recieverId = event.target.getAttribute("data-reciever-id");
+
+            var notificationId = event.target.getAttribute("data-notification-id");
+
+            $.ajax({
+                url: '/delete-notification',
+                method: 'POST',
+                data: { senderId: senderId, recieverId: recieverId },
+                success: function (data) {
+                    document.querySelector(`.notification-${notificationId}`).classList.add('hiddenAction');
+                },
+                error: function (error) {
+                    console.error("Failed :", error);
+                }
+            });
+        });
+    }
+
+    function fetchNotifications(page) {
+        $.ajax({
+            url: '/all/notifications',
+            method: 'GET',
+            dataType: 'json',
+            data: { page: currentPage },
+            success: function (data) {
+                if (data && data.size > 0) {
+                    appendNotifications(data.content);
+
+                    isLoading = false;
+                }
+                else {
+                    console.log("No more notifications to load...");
+
+                    isLoading = true;
+                }
+            },
+            error: function (error) {
+                console.log(error);
+
+                isLoading = false;
+            }
+        });
+    }
+
+
+    function exploreAllusers(activeMenuText) {
+        if (activeMenuText === 'Explore') {
+
+            $('.create-post').hide();
+
+            $.ajax({
+                url: '/exploreFriends',
+                method: 'GET',
+                dataType: 'json',
+                data: { page: currentPage },
+                success: function (data) {
+
+                    if (data && data.size > 0) {
+                        appendFriends(data.content);
+
+                        isLoading = false;
+                    }
+                    else {
+                        console.log("No more posts to load...");
+
+                        isLoading = true;
+                    }
+                },
+                error: function (error) {
+                    console.error("Failed to fetch posts:", error); // Handle errors
+
+                    isLoading = false;
+                }
+            });
+        }
+        else if (activeMenuText === 'Home') {
+            $('.create-post').show();
+
+            fetchPosts(currentPage);
+        }
+        else if (activeMenuText === 'Notification') {
+            $('.create-post').hide();
+
+            fetchNotifications(currentPage);
+        }
+    }
+
+</script>
+
+
+<script>
+
+    let senderIdGlobal = null, recieverIdGlobal = null;
+
+    const stompClient = new StompJs.Client({
+        brokerURL: 'ws://localhost:8080/websocket'
+    });
+
+    function formatTimestamp(isoTimestamp) {
+        const date = new Date(isoTimestamp);
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    function startConnection(senderId, recieverId) {
+        var chatRoomId = (senderId < recieverId) ? senderId + '_' + recieverId : recieverId + '_' + senderId;
+
+        senderIdGlobal = senderId;
+
+        recieverIdGlobal = recieverId;
+
+        var chatEndpoint = `/private/${chatRoomId}`;
+
+        // console.log("SenderId -> "+senderId);
+
+        // console.log("RecieverId -> "+recieverId);
+
+
+        stompClient.onConnect = (frame) => {
+            console.log('Connected: ' + frame);
+
+            stompClient.subscribe(chatEndpoint, (message) => {
+
+                var parsedMessage = JSON.parse(message.body || new TextDecoder().decode(message._binaryBody));
+
+                console.log(parsedMessage);
+
+                // console.log(formatTimestamp(parsedMessage.createdTimestamp));
+
+                var decodedMessage = JSON.parse(new TextDecoder().decode(message._binaryBody));
+
+                displayMessage(decodedMessage.message, parsedMessage.id, parsedMessage.recieverId);
+            });
+        };
+
+        stompClient.activate();
+    }
+
+    function displayMessage(message, id, recieverId) {
+        let chatboxMessages = document.getElementById("chatbox-messages");
+
+        let messageElement = document.createElement("p");
+
+        messageElement.textContent = message;
+
+        messageElement.classList.add("chat-message");
+
+        chatboxMessages.appendChild(messageElement);
+
+        chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+
+        var userId = BigInt([[${ userId }]]);
+
+        // console.log("SenderId ->"+ senderId);
+
+        // console.log("RecieverId ->"+ recieverId);
+
+        // console.log("Message ->"+ message);
+
+        if (userId == BigInt(recieverId)) {
+            $.ajax({
+                url: '/updateMessageSeen',
+                method: 'POST',
+                data: { id: id },
+                success: function (data) {
+                    // console.log(data);
+                },
+                error: function (error) {
+                    console.error("Failed :", error);
+                }
+            });
+        }
+    }
+
+    function disconnect() {
+        if (stompClient && stompClient.connected) {
+            senderIdGlobal = null;
+
+            recieverIdGlobal = null;
+
+            stompClient.deactivate().then(() => {
+                console.log("Disconnected");
+            });
+        }
+    }
+
+    $('#messageSendButton').on('click', function () {
+        var message = $('#messageInput').val();
+
+        var chatRoomId = (senderIdGlobal < recieverIdGlobal) ? senderIdGlobal + '_' + recieverIdGlobal : recieverIdGlobal + '_' + senderIdGlobal;
+
+        var destinationUrl = `/app/sendMessage/${chatRoomId}`;
+
+        // var userId = BigInt([[${userId}]]);
+
+        stompClient.publish({
+            destination: destinationUrl,
+            body: JSON.stringify({ message: message, senderId: senderIdGlobal.toString(), recieverId: recieverIdGlobal.toString() })
+        });
+    });
+
+    // $('#').on('click',function(){
+    //     $.ajax({
+    //         url:'/bulk-update-reciever',
+    //         method:'POST',
+    //         success: function(data){
+    //             console.log(data);
+    //         },
+    //         error: function(error){
+    //             console.error("Failed :", error);
+    //         }
+    //     });
+    // });
+
+</script>
+
+</html>
