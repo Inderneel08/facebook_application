@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <title>Change Password</title>
     <link rel="icon" type="image/png" th:href="@{/images/icons/favicon.ico}"/>

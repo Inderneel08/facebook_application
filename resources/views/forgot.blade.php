@@ -2,16 +2,21 @@
 <html lang="en">
 
 <head>
-    <title>Login</title>
-    <link rel="icon" type="image/png" src="{{ asset('static/images/icons/favicon.ico') }}" />
+    <title>Forgot Password</title>
+    <link rel="icon" type="image/png" href="{{ asset('static/images/icons/favicon.ico') }}" />
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="static/js/jquery.min.js"></script>
+    <script src="{{ asset('static/js/jquery.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+
+
+
 
     <link rel="stylesheet" type="text/css" href="{{ asset('static/vendor/bootstrap/css/bootstrap.min.css') }}">
+
 
     <link rel="stylesheet" type="text/css"
         href="{{ asset('static/fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
@@ -19,58 +24,46 @@
     <link rel="stylesheet" type="text/css"
         href="{{ asset('static/fonts/iconic/css/material-design-iconic-font.min.css') }}">
 
+    <!-- =============================================================================================== -->
+
     <link rel="stylesheet" type="text/css" href="{{ asset('static/vendor/animate/animate.css') }}">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('static/vendor/css-hamburgers/hamburgers.min.css') }}">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('static/vendor/animsition/css/animsition.min.css') }}">
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('static/vendor/select2/select2.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('static/vendor/select2/select2.min.css') }} ">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('static/vendor/daterangepicker/daterangepicker.css') }}">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('static/css/util.css') }}">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('static/css/main.css') }}">
+
 </head>
 
 <body>
 
     <div class="limiter">
+        {{-- <!-- {{ asset('public') }} --> --}}
         <div class="container-login100" style="background-image: url('{{ asset('static/images/bg-01.jpg') }}')">
             <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
-                <form class="login100-form validate-form" action="{{ route('do-login') }}" method="post" id="loginForm">
+                <form class="login100-form validate-form" method="post" id="forgotForm">
                     <span class="login100-form-title p-b-49">
-                        Login
+                        Forgot Password
                     </span>
 
                     <div class="wrap-input100 validate-input m-b-23" data-validate="Email is required">
                         <span class="label-input100">Email</span>
-                        <input class="input100" type="text" name="email" th:field="*{email}"
-                            placeholder="Type your Email">
+                        <input class="input100" type="text" name="email" id="email" placeholder="Type your Email">
                         <span class="focus-input100" data-symbol="&#xf206;"></span>
-                    </div>
-
-                    <input type="hidden" id="hashString" th:value="${session.hashString}" name="hashString">
-
-                    <div class="wrap-input100 validate-input" data-validate="Password is required">
-                        <span class="label-input100">Password</span>
-                        <input class="input100" type="password" name="password" th:field="*{password}"
-                            placeholder="Type your password" id="password">
-                        <span class="focus-input100" data-symbol="&#xf190;"></span>
-                    </div>
-
-                    <div class="text-right p-t-8 p-b-31">
-                        <a href="/forgot-password">
-                            Forgot password?
-                        </a>
                     </div>
 
                     <div class="container-login100-form-btn">
                         <div class="wrap-login100-form-btn">
                             <div class="login100-form-bgbtn"></div>
                             <button class="login100-form-btn">
-                                Login
+                                Forgot Password
                             </button>
                         </div>
                     </div>
@@ -100,13 +93,13 @@
                             Or Sign Up Using
                         </span>
 
-                        <a href="/signup" class="txt2">
+                        <a href="{{ route('signup') }}" class="txt2">
                             Sign Up
                         </a>
 
                         <br>
 
-                        <a href="/" class="txt2">
+                        <a href="@{/}" class="txt2">
                             Back to homepage
                         </a>
                     </div>
@@ -116,31 +109,71 @@
     </div>
 
 
-    <div id="dropDownSelect1"></div>
+    <script src="{{ asset('static/vendor/animsition/js/animsition.min.js') }}"></script>
 
-    <script src="static/vendor/animsition/js/animsition.min.js"></script>
+    <script src="{{ asset('static/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="{{ asset('static/vendor/select2/select2.min.js') }}"></script>
 
-    <script src="static/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ asset('static/vendor/daterangepicker/moment.min.js') }}"></script>
 
-    <script src="static/vendor/select2/select2.min.js"></script>
+    <script src="{{ asset('static/vendor/daterangepicker/daterangepicker.js') }}"></script>
 
-    <script src="static/vendor/daterangepicker/moment.min.js"></script>
+    <script src="{{ asset('static/vendor/countdowntime/countdowntime.js') }}"></script>
 
-    <script src="static/vendor/daterangepicker/daterangepicker.js"></script>
-
-    <script src="static/vendor/countdowntime/countdowntime.js"></script>
-
-    <script src="static/js/main.js"></script>
+    <script src="{{ asset('static/js/main.js') }}"></script>
 
     <script>
-        $('#loginForm').on('submit', function (event) {
-            const password = $('#password').val();
+        $(document).ready(function () {
+            $('#forgotForm').on('submit', function (event) {
+                event.preventDefault();
 
-            $('#password').val(CryptoJS.SHA256(CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex) + hashString).toString(CryptoJS.enc.Hex));
+                var email = $('input[name="email"]').val();
+
+                if (!email) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Email is required.',
+                        confirmButtonText: 'OK'
+                    });
+
+                    return;
+                }
+
+                $.ajax({
+                    url: '/change-password',
+                    type: 'POST',
+                    contentType: 'application/json',
+
+                    data: JSON.stringify({ email: email }),
+
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'You will get an email for changing the password if it exists in our records.',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/forgot-password';
+                        });
+                    },
+                    error: function (xhr) {
+                        const errorMessage = (xhr.responseText);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: errorMessage,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/forgot-password';
+                        });
+                    }
+
+                });
+            });
         });
-
     </script>
 
 </body>

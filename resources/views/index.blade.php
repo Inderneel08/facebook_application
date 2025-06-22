@@ -13,7 +13,7 @@
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
-    <script th:src="{{ asset('static/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('static/js/jquery.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="{{ asset('static/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('static/css/text.css') }}">
     <link rel="stylesheet" href="{{ asset('static/vendor/bootstrap/css/bootstrap.min.css') }}">
-    <!-- <script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script> -->
+    <!-- <script src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
         integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
         crossorigin="anonymous"></script>
@@ -252,12 +252,12 @@
 </style>
 
 <body>
-    <!-- ${#authentication.principal != null} ? @{/home} : @{/} -->
+    {{-- <!-- ${#authentication.principal != null} ? @{/home} : @{/} --> --}}
     <nav>
         <div class="container">
             <h2 class="logo">
-                <a href="${#authentication.principal == 'anonymousUser' ? '/' : '/home'}"
-                    style="text-decoration: none;color: inherit;">
+                {{-- ${#authentication.principal == 'anonymousUser' ? '/' : '/home'} --}}
+                <a href="{{ Auth::check() ? '/' : '/home' }}" style="text-decoration: none;color: inherit;">
                     mySocial
                 </a>
             </h2>
@@ -268,43 +268,55 @@
 
             <div class="dropdown create d-flex justify-content-end align-items-center">
                 <!-- "Create" Button for Anonymous Users -->
-                <a class="btn btn-primary me-3" href="@{/login}" th:if="${#authorization.expression('isAnonymous()')}">
-                    Login
-                </a>
 
-                <!-- <pre th:text="${userId}"></pre> -->
+                @if(Auth::user())
 
-                <a class="btn btn-primary me-3" href="@{/signup}" th:if="${#authorization.expression('isAnonymous()')}">
-                    Signup
-                </a>
+                    <a class="btn btn-primary me-3" href="@{/login}" th:if="${#authorization.expression('isAnonymous()')}">
+                        Login
+                    </a>
 
-                <div class="dropdown" th:if="${#authorization.expression('isAuthenticated()')}">
-                    <button class="btn btn-secondary dropdown-toggle d-flex align-items-center dropdown-button"
-                        type="button" id="dropdownMenuButton" aria-expanded="false">
-                        <img th:if="${profile_image_path != null}" th:src="${profile_image_path}" alt="profile-image"
-                            class="profile-image">
+                @else
 
-                        <img th:if="${profile_image_path == null and gender == 'MALE'}" th:src="@{/images/man.png}"
-                            alt="profile-image" class="profile-image">
+                    <a class="btn btn-primary me-3" href="@{/signup}" th:if="${#authorization.expression('isAnonymous()')}">
+                        Signup
+                    </a>
 
-                        <img th:if="${profile_image_path == null and gender == 'FEMALE'}" th:src="@{/images/female.jpg}"
-                            alt="profile-image" class="profile-image">
+                @endif
+                {{-- th:if="${#authorization.expression('isAuthenticated()')}" --}}
 
-                        <!-- <p th:text="${#authentication.toString()}"></p> -->
-                        <span th:text="${firstname}"></span>
-                        &nbsp;
-                        <span th:text="${lastname}"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="@{/view-profile}">View Profile</a></li>
-                        <li>
-                            <form th:action="@{/logout}" method="post">
-                                <button type="submit" class="dropdown-item form-control"
-                                    style="cursor: pointer; font-size: inherit; left: 5%; border: none; background: none;">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+                @if(Auth::check())
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle d-flex align-items-center dropdown-button"
+                            type="button" id="dropdownMenuButton" aria-expanded="false">
+
+                            {{-- th:if="${profile_image_path != null}" --}}
+                            @if($profile_image_path != null)
+                                <img src="{{ $profile_image_path }}" alt="profile-image" class="profile-image">
+                            @else
+                                {{-- th:if="${profile_image_path == null and gender == 'MALE'}" --}}
+                                {{-- th:if="${profile_image_path == null and gender == 'FEMALE'}" --}}
+                                @if($gender == 'MALE')
+                                    <img src="{{ asset('static/images/man.png') }}" alt="profile-image" class="profile-image">
+                                @elseif($gender == 'FEMALE')
+                                    <img src="{{ asset('static/images/female.jpg') }}" alt="profile-image" class="profile-image">
+                                @endif
+                            @endif
+                            {{-- <!-- <p th:text="${#authentication.toString()}"></p> --> --}}
+                            <span>{{ $firstname }}</span>
+                            &nbsp;
+                            <span>{{ $lastname }}</span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="@{/view-profile}">View Profile</a></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="dropdown-item form-control"
+                                        style="cursor: pointer; font-size: inherit; left: 5%; border: none; background: none;">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
 
             </div>
         </div>
@@ -317,12 +329,12 @@
             <div class="left">
                 <a class="profile">
                     <div class="profile-photo">
-                        <img th:if="${profile_image_path != null}" th:src="${profile_image_path}" alt="profile-image">
+                        <img th:if="${profile_image_path != null}" src="${profile_image_path}" alt="profile-image">
 
-                        <img th:if="${profile_image_path == null and gender == 'MALE'}" th:src="@{/images/man.png}"
+                        <img th:if="${profile_image_path == null and gender == 'MALE'}" src="@{/images/man.png}"
                             alt="profile-image">
 
-                        <img th:if="${profile_image_path == null and gender == 'FEMALE'}" th:src="@{/images/female.jpg}"
+                        <img th:if="${profile_image_path == null and gender == 'FEMALE'}" src="@{/images/female.jpg}"
                             alt="profile-image">
                     </div>
                     <div class="handle">
@@ -359,7 +371,7 @@
                         <!-- <div class="notifications-popup"> -->
                         <!-- <div>
                                 <div class="profile-photo">
-                                    <img th:src="@{/images/profile-2.jpg}" alt="profile-2">
+                                    <img src="@{/images/profile-2.jpg}" alt="profile-2">
                                 </div>
                                 <div class="notification-body">
                                     <b>Keke Benjamin</b> accepted your friend request
@@ -368,7 +380,7 @@
                             </div>
                             <div>
                                 <div class="profile-photo">
-                                    <img th:src="@{/images/profile-3.jpg}" alt="profile-3">
+                                    <img src="@{/images/profile-3.jpg}" alt="profile-3">
                                 </div>
                                 <div class="notification-body">
                                     <b>John Doe</b> commented on your post
@@ -377,7 +389,7 @@
                             </div>
                             <div>
                                 <div class="profile-photo">
-                                    <img th:src="@{/images/profile-4.jpg}" alt="profile-4">
+                                    <img src="@{/images/profile-4.jpg}" alt="profile-4">
                                 </div>
                                 <div class="notification-body">
                                     <b>Marry Oppong</b> and <b>283 Others</b> liked your post
@@ -386,7 +398,7 @@
                             </div>
                             <div>
                                 <div class="profile-photo">
-                                    <img th:src="@{/images/profile-5.jpg}" alt="profile-5">
+                                    <img src="@{/images/profile-5.jpg}" alt="profile-5">
                                 </div>
                                 <div class="notification-body">
                                     <b>Doris Y. Lartey</b> commented on a post you are tagged in
@@ -395,7 +407,7 @@
                             </div>
                             <div>
                                 <div class="profile-photo">
-                                    <img th:src="@{/images/profile-6.jpg}" alt="profile-6">
+                                    <img src="@{/images/profile-6.jpg}" alt="profile-6">
                                 </div>
                                 <div class="notification-body">
                                     <b>Keyley Jenner</b> commented on a post you are tagged in
@@ -404,7 +416,7 @@
                             </div>
                             <div>
                                 <div class="profile-photo">
-                                    <img th:src="@{/images/profile-7.jpg}" alt="profile-7">
+                                    <img src="@{/images/profile-7.jpg}" alt="profile-7">
                                 </div>
                                 <div class="notification-body">
                                     <b>Jane Doe</b> commented on your post
@@ -447,12 +459,12 @@
                 <!----------------- END OF STORIES -------------------->
                 <form class="create-post">
                     <div class="profile-photo">
-                        <img th:if="${profile_image_path != null}" th:src="${profile_image_path}" alt="profile-image">
+                        <img th:if="${profile_image_path != null}" src="${profile_image_path}" alt="profile-image">
 
-                        <img th:if="${profile_image_path == null and gender == 'MALE'}" th:src="@{/images/man.png}"
+                        <img th:if="${profile_image_path == null and gender == 'MALE'}" src="@{/images/man.png}"
                             alt="profile-image">
 
-                        <img th:if="${profile_image_path == null and gender == 'FEMALE'}" th:src="@{/images/female.jpg}"
+                        <img th:if="${profile_image_path == null and gender == 'FEMALE'}" src="@{/images/female.jpg}"
                             alt="profile-image">
                     </div>
 
@@ -502,346 +514,6 @@
                 <br>
 
                 <div id="loading-spinner" style="display:none;">Loading...</div>
-
-
-                <!-- <div class="feeds">
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profile-photo">
-                                    <img th:src="@{/images/profile-13.jpg}" alt="profile-13">
-                                </div>
-                                <div class="info">
-                                    <h3>Lana Rose</h3>
-                                    <small>Dubai, 15 Minutes Ago</small>
-                                </div>
-                            </div>
-                            <span class="edit">
-                                <i class="uil uil-ellipsis-h"></i>
-                            </span>
-                        </div>
-
-                        <div class="photo">
-                            <img th:src="@{/images/feed-1.jpg}" alt="feed-1">
-                        </div>
-
-                        <div class="action-buttons">
-                            <div class="interaction-buttons">
-                                <span><i class="uil uil-heart"></i></span>
-                                <span><i class="uil uil-comment-dots"></i></span>
-                                <span><i class="uil uil-share-alt"></i></span>
-                            </div>
-                            <div class="bookmark">
-                                <span><i class="uil uil-bookmark-full"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="liked-by">
-                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
-                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
-                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
-                            <p>Liked by <b>Ernest Achiever</b> and <b>2, 323 others</b></p>
-                        </div>
-
-                        <div class="caption">
-                            <p><b>Lana Rose</b> Lorem ipsum dolor sit quisquam eius.
-                            <span class="harsh-tag">#lifestyle</span></p>
-                        </div>
-
-                        <div class="comments text-muted">
-                            View all 277 comments
-                        </div>
-                    </div>
-
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profile-photo">
-                                    <img th:src="@{/images/profile-10.jpg}" alt="profile-10">
-                                </div>
-                                <div class="info">
-                                    <h3>Clara Dwayne</h3>
-                                    <small>Miami, 2 Hours Ago</small>
-                                </div>
-                            </div>
-                            <span class="edit">
-                                <i class="uil uil-ellipsis-h"></i>
-                            </span>
-                        </div>
-
-                        <div class="photo">
-                            <img th:src="@{/images/feed-3.jpg}" alt="feed-3">
-                        </div>
-
-                        <div class="action-buttons">
-                            <div class="interaction-buttons">
-                                <span><i class="uil uil-heart"></i></span>
-                                <span><i class="uil uil-comment-dots"></i></span>
-                                <span><i class="uil uil-share-alt"></i></span>
-                            </div>
-                            <div class="bookmark">
-                                <span><i class="uil uil-bookmark-full"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="liked-by">
-                            <span><img th:src="@{/images/profile-11.jpg}" alt="profile-11"></span>
-                            <span><img th:src="@{/images/profile-5.jpg}" alt="profile-5"></span>
-                            <span><img th:src="@{/images/profile-16.jpg}" alt="profile-16"></span>
-                            <p>Liked by <b>Diana Rose</b> and <b>2, 323 others</b></p>
-                        </div>
-
-                        <div class="caption">
-                            <p><b>Clara Dwayne</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, fugiat? Ipsam voluptatibus beatae facere eos harum voluptas distinctio, officia, facilis sed quisquam esse, assumenda minima ut. Excepturi sit quis reiciendis!
-                            <span class="harsh-tag">#lifestyle</span></p>
-                        </div>
-
-                        <div class="comments text-muted">
-                            View all 100 comments
-                        </div>
-                    </div>
-
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profile-photo">
-                                    <img th:src="@{/images/profile-4.jpg}" alt="profile-4">
-                                </div>
-                                <div class="info">
-                                    <h3>Rosalinda Clark</h3>
-                                    <small>New York, 50 Minutes Ago</small>
-                                </div>
-                            </div>
-                            <span class="edit">
-                                <i class="uil uil-ellipsis-h"></i>
-                            </span>
-                        </div>
-
-                        <div class="photo">
-                            <img th:src="@{/images/feed-4.jpg}" alt="feed-4">
-                        </div>
-
-                        <div class="action-buttons">
-                            <div class="interaction-buttons">
-                                <span><i class="uil uil-heart"></i></span>
-                                <span><i class="uil uil-comment-dots"></i></span>
-                                <span><i class="uil uil-share-alt"></i></span>
-                            </div>
-                            <div class="bookmark">
-                                <span><i class="uil uil-bookmark-full"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="liked-by">
-                            <span><img th:src="@{/images/profile-12.jpg}" alt="profile-12"></span>
-                            <span><img th:src="@{/images/profile-13.jpg}" alt="profile-13"></span>
-                            <span><img th:src="@{/images/profile-14.jpg}" alt="profile-14"></span>
-                            <p>Liked by <b>Clara Dwayne</b> and <b>2, 323 others</b></p>
-                        </div>
-
-                        <div class="caption">
-                            <p><b>Rosalinda Clark</b> Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quo ullam, quam voluptatibus natus ex corporis ea atque quisquam, necessitatibus, cumque eligendi aliquam nulla soluta hic. Obcaecati, tempore dignissimos! Esse cupiditate laborum ullam, quae necessitatibus, officiis, quaerat aspernatur illo voluptatum repellat perferendis voluptatem similique. Assumenda nostrum, eius sit laborum nesciunt deserunt!
-                            <span class="harsh-tag">#lifestyle</span></p>
-                        </div>
-
-                        <div class="comments text-muted">
-                            View all 50 comments
-                        </div>
-                    </div>
-
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profile-photo">
-                                    <img th:src="@{/images/profile-5.jpg}" alt="profile-5">
-                                </div>
-                                <div class="info">
-                                    <h3>Alexandria Riana</h3>
-                                    <small>Dubai, 1 Hour Ago</small>
-                                </div>
-                            </div>
-                            <span class="edit">
-                                <i class="uil uil-ellipsis-h"></i>
-                            </span>
-                        </div>
-
-                        <div class="photo">
-                            <img th:src="@{/images/feed-5.jpg}" alt="feed-5">
-                        </div>
-
-                        <div class="action-buttons">
-                            <div class="interaction-buttons">
-                                <span><i class="uil uil-heart"></i></span>
-                                <span><i class="uil uil-comment-dots"></i></span>
-                                <span><i class="uil uil-share-alt"></i></span>
-                            </div>
-                            <div class="bookmark">
-                                <span><i class="uil uil-bookmark-full"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="liked-by">
-                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
-                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
-                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
-                            <p>Liked by <b>Lana Rose</b> and <b>5, 323 others</b></p>
-                        </div>
-
-                        <div class="caption">
-                            <p><b>Alexandria Riana</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi architecto sunt itaque, in, enim non doloremque velit unde nihil vitae impedit dolorum, distinctio ab deleniti!
-                            <span class="harsh-tag">#lifestyle</span></p>
-                        </div>
-
-                        <div class="comments text-muted">
-                            View all 540 comments
-                        </div>
-                    </div>
-
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profile-photo">
-                                    <img th:src="@{/images/profile-7.jpg}" alt="profile-7">
-                                </div>
-                                <div class="info">
-                                    <h3>Keylie Hadid</h3>
-                                    <small>Dubai, 3 Hours Ago</small>
-                                </div>
-                            </div>
-                            <span class="edit">
-                                <i class="uil uil-ellipsis-h"></i>
-                            </span>
-                        </div>
-
-                        <div class="photo">
-                            <img th:src="@{/images/feed-7.jpg}" alt="feed-7">
-                        </div>
-
-                        <div class="action-buttons">
-                            <div class="interaction-buttons">
-                                <span><i class="uil uil-heart"></i></span>
-                                <span><i class="uil uil-comment-dots"></i></span>
-                                <span><i class="uil uil-share-alt"></i></span>
-                            </div>
-                            <div class="bookmark">
-                                <span><i class="uil uil-bookmark-full"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="liked-by">
-                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
-                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
-                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
-                            <p>Liked by <b>Riana Rose</b> and <b>1, 226 others</b></p>
-                        </div>
-
-                        <div class="caption">
-                            <p><b>Keylie Hadid</b> Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem obcaecati nisi veritatis quisquam eius accusantium rem quo repellat facilis neque.
-                            <span class="harsh-tag">#lifestyle</span></p>
-                        </div>
-
-                        <div class="comments text-muted">
-                            View all 199 comments
-                        </div>
-                    </div>
-
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profile-photo">
-                                    <img th:src="@{/images/profile-15.jpg}" alt="profile-15">
-                                </div>
-                                <div class="info">
-                                    <h3>Benjamin Dwayne</h3>
-                                    <small>New York, 5 Hours Ago</small>
-                                </div>
-                            </div>
-                            <span class="edit">
-                                <i class="uil uil-ellipsis-h"></i>
-                            </span>
-                        </div>
-
-                        <div class="photo">
-                            <img th:src="@{/images/feed-2.jpg}" alt="feed-2">
-                        </div>
-
-                        <div class="action-buttons">
-                            <div class="interaction-buttons">
-                                <span><i class="uil uil-heart"></i></span>
-                                <span><i class="uil uil-comment-dots"></i></span>
-                                <span><i class="uil uil-share-alt"></i></span>
-                            </div>
-                            <div class="bookmark">
-                                <span><i class="uil uil-bookmark-full"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="liked-by">
-                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
-                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
-                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
-                            <p>Liked by <b>Ernest Achiever</b> and <b>2, 323 others</b></p>
-                        </div>
-
-                        <div class="caption">
-                            <p><b>Benjamin Dwayne</b> Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nostrum, consequuntur!
-                            <span class="harsh-tag">#lifestyle</span></p>
-                        </div>
-
-                        <div class="comments text-muted">
-                            View all 277 comments
-                        </div>
-                    </div>
-
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profile-photo">
-                                    <img th:src="@{/images/profile-3.jpg}" alt="profile-3">
-                                </div>
-                                <div class="info">
-                                    <h3>Indiana Ellison</h3>
-                                    <small>Qatar, 8 Hours Ago</small>
-                                </div>
-                            </div>
-                            <span class="edit">
-                                <i class="uil uil-ellipsis-h"></i>
-                            </span>
-                        </div>
-
-                        <div class="photo">
-                            <img th:src="@{/images/feed-6.jpg}" alt="feed-6">
-                        </div>
-
-                        <div class="action-buttons">
-                            <div class="interaction-buttons">
-                                <span><i class="uil uil-heart"></i></span>
-                                <span><i class="uil uil-comment-dots"></i></span>
-                                <span><i class="uil uil-share-alt"></i></span>
-                            </div>
-                            <div class="bookmark">
-                                <span><i class="uil uil-bookmark-full"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="liked-by">
-                            <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
-                            <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
-                            <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
-                            <p>Liked by <b>Benjamin Dwayne</b> and <b>2, 323 others</b></p>
-                        </div>
-
-                        <div class="caption">
-                            <p><b>Indiana Ellison</b> Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consequuntur itaque quasi autem pariatur ducimus eligendi, qui odio molestias at molestiae.
-                            <span class="harsh-tag">#lifestyle</span></p>
-                        </div>
-
-                        <div class="comments text-muted">
-                            View all 277 comments
-                        </div>
-                    </div>
-                </div> -->
-
             </div>
             <!----------------- END OF MIDDLE -------------------->
 
@@ -854,7 +526,8 @@
                         <i class="uil uil-edit"></i>
                     </div>
 
-                    <!-- <p th:text="'You have ' + ${#lists.size(friendRequests)} + ' friend requests.'"></p> -->
+                    {{-- <!-- <p th:text="'You have ' + ${#lists.size(friendRequests)} + ' friend requests.'"></p> -->
+                    --}}
 
                     <div class="search-bar">
                         <i class="uil uil-search"></i>
@@ -864,85 +537,7 @@
 
                     <div class="category">
                         <h6 class="active">Messages</h6>
-                        <!-- <h6>General</h6> -->
-                        <!-- <h6 class="message-requests" style="cursor: pointer;" id="requests_friend">
-                            Requests (<span th:text="${friendRequests}"></span>)
-                        </h6> -->
                     </div>
-
-                    <!-- <div class="message">
-                        <div class="profile-photo">
-                            <img th:src="@{/images/profile-17.jpg}" alt="profile-17">
-                        </div>
-                        <div class="message-body">
-                            <h5>Edem Quist</h5>
-                            <p class="text-muted">Just woke up bruh</p>
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="profile-photo">
-                            <img th:src="@{/images/profile-6.jpg}" alt="profile-6">
-                        </div>
-                        <div class="message-body">
-                            <h5>Daniella Jackson</h5>
-                            <p class="text-bold">2 new messages</p>
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="profile-photo">
-                            <img th:src="@{/images/profile-8.jpg}" alt="profile-8">
-                            <div class="active"></div>
-                        </div>
-                        <div class="message-body">
-                            <h5>Chantel Msiza</h5>
-                            <p class="text-muted">lol u right</p>
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="profile-photo">
-                            <img th:src="@{/images/profile-10.jpg}" alt="profile-10">
-                        </div>
-                        <div class="message-body">
-                            <h5>Juliet Makarey</h5>
-                            <p class="text-muted">Birtday Tomorrow</p>
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="profile-photo">
-                            <img th:src="@{/images/profile-3.jpg}" alt="profile-3">
-                            <div class="active"></div>
-                        </div>
-                        <div class="message-body">
-                            <h5>Keylie Hadid</h5>
-                            <p class="text-bold">5 new messages</p>
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="profile-photo">
-                            <img th:src="@{/images/profile-15.jpg}" alt="profile-15">
-                        </div>
-                        <div class="message-body">
-                            <h5>Benjamin Dwayne</h5>
-                            <p class="text-muted">haha got that!</p>
-                        </div>
-                    </div> -->
-
-                    <!-- <div th:each="friend : ${friendRequests}" class="message" style="cursor: pointer;">
-                        <div class="profile-photo">
-                            <img th:src="@{${friend.profile_photo}}" th:alt="'profile-' + ${friend.first_name} + '_' + ${friend.last_name}">
-                        </div>
-
-                        <div class="message-body">
-                            <h5 th:text="${friend.first_name} + ' ' + ${friend.last_name}"></h5>
-
-                            <p class="text-muted">Hello</p>
-                        </div>
-                    </div> -->
 
                     <div class="messages-container" style="cursor: pointer; display: none;"></div>
 
@@ -969,72 +564,6 @@
                     </div>
 
                 </div>
-
-                <!-- <div class="friend-requests">
-                    <h4>Requests</h4>
-                </div> -->
-
-                <!-- <div class="friend-requests">
-                    <h4>Requests</h4>
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-photo">
-                                <img th:src="@{/images/profile-20.jpg}" alt="profile-20">
-                            </div>
-                            <div>
-                                <h5>Hajia Bintu</h5>
-                                <p class="text-muted">8 mutual friends</p>
-                            </div>
-                        </div>
-                        <div class="action">
-                            <button class="btn btn-primary">
-                                Accept
-                            </button>
-                            <button class="btn">
-                                Decline
-                            </button>
-                        </div>
-                    </div>
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-photo">
-                                <img th:src="@{/images/profile-18.jpg}" alt="profile-18">
-                            </div>
-                            <div>
-                                <h5>Edelson Mandela</h5>
-                                <p class="text-muted">2 mutual friends</p>
-                            </div>
-                        </div>
-                        <div class="action">
-                            <button class="btn btn-primary">
-                                Accept
-                            </button>
-                            <button class="btn">
-                                Decline
-                            </button>
-                        </div>
-                    </div>
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-photo">
-                                <img th:src="@{/images/profile-17.jpg}" alt="profile-17">
-                            </div>
-                            <div>
-                                <h5>Megan Baldwin</h5>
-                                <p class="text-muted">5 mutual friends</p>
-                            </div>
-                        </div>
-                        <div class="action">
-                            <button class="btn btn-primary">
-                                Accept
-                            </button>
-                            <button class="btn">
-                                Decline
-                            </button>
-                        </div>
-                    </div>
-                </div> -->
-
             </div>
             <!----------------- END OF RIGHT -------------------->
         </div>
@@ -1100,7 +629,7 @@
         </div>
     </div>
 
-    <script th:src="@{/js/index.js}"></script>
+    <script src="@{/js/index.js}"></script>
 </body>
 
 
@@ -1361,9 +890,9 @@
                     </div>
 
                     <div class="liked-by">
-                        <span><img th:src="@{/images/profile-10.jpg}" alt="profile-10"></span>
-                        <span><img th:src="@{/images/profile-4.jpg}" alt="profile-4"></span>
-                        <span><img th:src="@{/images/profile-15.jpg}" alt="profile-15"></span>
+                        <span><img src="@{/images/profile-10.jpg}" alt="profile-10"></span>
+                        <span><img src="@{/images/profile-4.jpg}" alt="profile-4"></span>
+                        <span><img src="@{/images/profile-15.jpg}" alt="profile-15"></span>
                         <p>Liked by <b>Ernest Achiever</b> and <b>2, 323 others</b></p>
                     </div>
 
@@ -2099,19 +1628,6 @@
             body: JSON.stringify({ message: message, senderId: senderIdGlobal.toString(), recieverId: recieverIdGlobal.toString() })
         });
     });
-
-    // $('#').on('click',function(){
-    //     $.ajax({
-    //         url:'/bulk-update-reciever',
-    //         method:'POST',
-    //         success: function(data){
-    //             console.log(data);
-    //         },
-    //         error: function(error){
-    //             console.error("Failed :", error);
-    //         }
-    //     });
-    // });
 
 </script>
 
